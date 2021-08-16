@@ -1,0 +1,6 @@
+substitutions:
+  devicename: switch4
+  fullname: Switch 4
+  address: 192.168.100.127
+
+<<: !include gosund.yaml
