@@ -10,17 +10,33 @@ wifi:
 
 # Reduce log level as otherwise logs would be flooded with analog sensor readings
 logger:
-  level: WARN
-  # logs:
-  #   sensor: INFO
-  #   adc: INFO
+  level: INFO
+  logs:
+    sensor: INFO
+    adc: INFO
+
+api:
+  password: !secret api_password
 
 ota:
   password: !secret ota_password
+  on_begin:
+    then:
+      - logger.log: "OTA start"
 
-mqtt:
-  broker: server.home
-  topic_prefix: esphome/${devicename}
+  on_end:
+    then:
+      - logger.log: "OTA end"
+
+  on_error:
+    then:
+      - logger.log:
+          format: "OTA update error %d"
+          args: ["x"]
+
+# mqtt:
+#   broker: server.home
+#   topic_prefix: esphome/${devicename}
 
 time:
   - platform: sntp
@@ -57,6 +73,9 @@ switch:
       - light.turn_off:
           id: led
           transition_length: 0s
+  # Restart
+  - platform: restart
+    name: ${fullname} Restart
 
 sensor:
   # WiFi Signal Sensor
